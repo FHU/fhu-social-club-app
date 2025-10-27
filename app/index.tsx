@@ -16,6 +16,10 @@ export default function HomeScreen() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
 
+  function capitalizeWords(str: string) {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,8 +53,7 @@ export default function HomeScreen() {
             <Image source={{ uri: item.imageURL }} style={styles.avatar} />
             <View style={styles.info}>
               <Text style={styles.name}>{item.firstName} {item.lastName}</Text>
-              <Text style={styles.classification}>{item.classification}</Text>
-              <Text style={styles.relationship}>{item.relationshipStatus}</Text>
+              <Text style={styles.classification}>{capitalizeWords(item.classification)}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -61,23 +64,26 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   avatar: {
-    
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 12
   },
   card: {
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: "#952727ff",
     padding: 12,
     borderRadius: 10,
     marginVertical: 6,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "#000000ff",
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
   classification: {
     fontSize: 14,
-    color: "#666" },
+    color: "#f2ca00ff" },
   container: {
     flex: 1,
     padding: 20,
@@ -93,7 +99,9 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   name: {
-    fontSize: 18, fontWeight: "600"
+    color: "white",
+    fontSize: 18,
+    fontWeight: "600"
   },
   title: {
     fontSize: 20,
