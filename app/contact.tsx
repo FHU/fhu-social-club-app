@@ -1,4 +1,4 @@
-import { RootStackParamList } from "@/types/navigation";
+import { Member, RootStackParamList } from "@/types/navigation";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import React from "react";
 import { Image, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -13,112 +13,152 @@ export default function ProfileScreen() {
   function capitalizeWords(str: string) {
     return str.replace(/\b\w/g, char => char.toUpperCase());
   }
-  function handleEmailPress(email: string) {
-    Linking.openURL(`mailto:${email}`);
+  async function handleEmailPress(email: string) {
+    const url = `mailto:${email}`;
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      console.warn("Email app not available on this device.");
+    }
+  
   }
   function handlePhonePress(phone: string) {
-    Linking.openURL(`tel:${phone}`);
+    Linking.openURL(`sms:${phone}`);
   }
 
   return (
+  <View style={styles.screen}>
     <ScrollView contentContainerStyle={styles.container}>
-
       {/* Avatar */}
-      <Image source={{ uri: parsedMember.imageURL }} style={styles.avatar} />
+      <View style={styles.avatarContainer}>
+        <Image source={{ uri: parsedMember.imageURL }} style={styles.avatar} />
+      </View>
 
       {/* Name */}
       <Text style={styles.name}>{parsedMember.firstName} {parsedMember.lastName}</Text>
 
       {/* Officer */}
-      {parsedMember.officer && (<Text style={styles.officer}>{parsedMember.officer}</Text>)}
+      <View style={styles.officerContainer}>
+        {parsedMember.officer && (<Text style={styles.officer}>{parsedMember.officer}</Text>)}
+      </View>
 
       {/* Classification */}
-      <Text style={styles.classification}>{capitalizeWords(parsedMember.classification)}</Text>
+      <Text style={styles.classification}>
+        <Text style={{ fontWeight: "bold" }}>Classification: </Text>
+        {capitalizeWords(parsedMember.classification)}
+      </Text>
 
       {/* Relationship */}
-      <Text style={styles.relationship}>Relationship Status: {capitalizeWords(parsedMember.relationshipStatus)}</Text>
+      <Text style={styles.relationship}>
+        <Text style={{ fontWeight: "bold" }}>Relationship Status: </Text>
+        {capitalizeWords(parsedMember.relationshipStatus)}
+      </Text>
 
       <View style={styles.infoText}>
         {/* Email */}
         {parsedMember.showEmail && parsedMember.email && (
-          <Text style={styles.infoText} onPress={() => handleEmailPress(parsedMember.email!)}>Email: {parsedMember.email}</Text>)}
+          <Text style={styles.infoText} onPress={() => handleEmailPress(parsedMember.email!)}>Email: {parsedMember.email}</Text>
+        )}
 
         {/* Phone */}
         {parsedMember.showPhone && parsedMember.phone && (
-          <Text style={styles.infoText} onPress={() => handlePhonePress(parsedMember.phone!)}>Phone: {parsedMember.phone}</Text>)}
-
+          <Text style={styles.infoText} onPress={() => handlePhonePress(parsedMember.phone!)}>Phone: {parsedMember.phone}</Text>
+        )}
       </View>
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
-    avatar: {
-      width: "100%",
-      height: 300,
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      borderBottomLeftRadius: 30,
-      borderBottomRightRadius: 30,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    classification: {
-      fontSize: 18,
-      color: "#555",
-      marginTop: 10,
-      textAlign: "center",
-    },
-    container: {
-      alignItems: "center",
-      padding: 20,
-      backgroundColor: "#f9f9f9",
-      paddingBottom: 40,
-    },
-    details: {
-      width: "100%",
-      alignItems: "flex-start",
-      marginTop: 12,
-      paddingHorizontal: 10,
-    },
-    infoText: {
-      fontSize: 16,
-      marginBottom: 8,
-      color: "#1E90FF",
-      textDecorationLine: "underline",
-    },
-    officer: {
-      fontSize: 16,
-      fontWeight: "600",
-      textAlign: "center",
-      color: "#fff",
-      backgroundColor: "#1E90FF",
-      paddingHorizontal: 12,
-      paddingVertical: 4,
-      borderRadius: 12,
-      overflow: "hidden",
-      marginTop: 6,
-    },
-    name: {
-      fontSize: 34,
-      fontWeight: "bold",
-      textAlign: "center",
-      marginTop: 20,
-      color: "#222",
-    },
-    relationship: {
-      fontSize: 16,
-      color: "#777",
-      marginBottom: 20,
-      textAlign: "center",
-    },
-    sectionTitle: {
-      fontWeight: "bold",
-      marginTop: 15,
-      marginBottom: 5,
-      fontSize: 16
-    }
-});
+  avatar: {
+    width: "100%",
+    height: 300,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom: 20,
+  },
+  avatarContainer: {
+    width: "100%",
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    backgroundColor: "#952727ff",
+    marginBottom: 20,
+  },
+  centeredBlock: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  classification: {
+    fontSize: 18,
+    color: "#fff",
+    marginTop: 10,
+    textAlign: "left",
+  },
+  container: {
+    padding: 20,
+    backgroundColor: "#952727ff",
+    paddingBottom: 40,
+  },
+  details: {
+    width: "100%",
+    alignItems: "flex-start",
+    marginTop: 12,
+    paddingHorizontal: 10,
+  },
+  infoText: {
+    fontSize: 18,
+    marginBottom: 8,
+    color: "#1E90FF",
+    textDecorationLine: "underline",
+    textAlign: "left",
+  },
+  officer: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    color: "#000",
+    backgroundColor: "#fff01eff",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    overflow: "hidden",
+    marginTop: 6,
+  },
+  officerContainer: {
+    alignItems: "center",
+  },
+  name: {
+    fontSize: 34,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#fff",
+  },
+  relationship: {
+    fontSize: 18,
+    color: "#fff",
+    marginBottom: 20,
+    textAlign: "left",
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: "#952727ff",
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    marginTop: 15,
+    marginBottom: 5,
+    fontSize: 16
+  }});
